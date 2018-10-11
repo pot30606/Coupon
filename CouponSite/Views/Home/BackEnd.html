@@ -1,0 +1,305 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Product App</title>
+    <link rel="stylesheet" href="../View/BackEnd.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
+          crossorigin="anonymous">
+</head>
+
+<body>
+
+    <div class="header">
+        <!--標題bar-->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03"
+                    aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand" href="#"></a>
+
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+                <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="#"></a>
+                    </li>
+                </ul>
+                <form class="form-inline my-2 my-lg-0"></form>
+            </div>
+        </nav>
+    </div>
+    <div class="container">
+        <!--新增產品-->
+        <div class="row">
+            <div class="col-4">
+
+            </div>
+            <div class="col-3">
+                <a class="btn btn-primary" id="addnew">新增產品與庫碰券</a>
+            </div>
+            <div class="col-3">
+                <a  class="btn btn-success" id="editcoupon">對現有產品增加庫碰券</a>
+            </div>
+            <div class="col-3">
+
+            </div>
+        </div>  
+        <div class="row" id="addNewProductAndCoupon">
+            <div class="col-12">
+
+
+                <div class="form-group">
+                    <label for="">產品名稱</label>
+                    <input type="text"
+                           class="form-control" name="" id="ProductName" aria-describedby="helpId" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label for="">Coupon代碼</label>
+                    <textarea class="form-control" rows="5" id="ProductCoupon"></textarea>
+                    
+                </div>
+                <div class="form-group">
+                    <label for="">價格</label>
+                    <input type="number"
+                           class="form-control" name="" id="ProductPrice" aria-describedby="helpId" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label for="">折扣(?% off)</label>
+                    <input type="number"
+                           class="form-control" name="" id="ProductDiscount" aria-describedby="helpId" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label for="">優惠期間(開始)</label>
+                    <input type="datetime"
+                           class="form-control" name="" id="ProductStart" aria-describedby="helpId" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label for="">優惠期間(結束)</label>
+                    <input type="datetime"
+                           class="form-control" name="" id="ProductEnd" aria-describedby="helpId" placeholder="">
+                </div>
+
+                <label>產品上架狀態</label>
+                <br />
+                <label class="switch">
+                    <input type="checkbox" id="Shelf">
+                    <span class="slider round"></span>
+                </label>
+
+                <a name="" id="saveProductInfo" class="btn btn-primary">新增產品與庫碰</a>
+            </div>
+        </div>
+        <!--對產品新增庫碰-->>
+        <div class="row" id="editProductNewCoupon">
+            <div class="col-12">
+                <label> 選擇產品</label>
+
+                <label> 輸入庫碰 </label>
+                <div class="form-group">
+                    <label for="">Coupon代碼</label>
+                    <textarea class="form-control" rows="5" id="ProductCoupon"></textarea>
+
+                </div>
+                <a name="" id="saveCouponInfo" class="btn btn-success">對該產品新增庫碰</a>
+            </div>
+        </div>
+
+        <!--全部產品資訊-->
+        <div class="row">
+            <div class="col-12">
+                <div>
+                    <h2>All Products</h2>
+                    <ul id="products" />
+                </div>
+            </div>
+        </div>
+
+
+
+
+    </div>
+    <div class="footer">
+
+    </div>
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
+
+
+
+    <script>
+        var uri = 'p/api/product';
+        var uri2 = 'p/api/main';
+
+
+
+        $(document).ready(function () {
+            check();
+
+            $("#saveProductInfo").on('click', function () {
+                SaveProductInfo();
+            });
+
+            $("#saveCouponInfo").on('click', function () {
+                saveCouponInfo();
+            });
+            
+            $("#addNewProductAndCoupon").show();
+            $("#editProductNewCoupon").hide();
+
+
+            $("#addnew").on('click', function () {
+                $("#addNewProductAndCoupon").show();
+                $("#editProductNewCoupon").hide();
+                $("#addnew").removeClass('btn-secondary');
+                $("#addnew").addClass('btn-primary');
+                $("#editcoupon").removeClass('btn-success');
+                $("#editcoupon").addClass('btn-secondary');
+            });
+
+            $("#editcoupon").on('click', function () {
+                $("#editProductNewCoupon").show();
+                $("#addNewProductAndCoupon").hide();
+                $("#editcoupon").removeClass('btn-secondary');
+                $("#editcoupon").addClass('btn-success');
+                $("#addnew").removeClass('btn-primary');
+                $("#addnew").addClass('btn-secondary');
+
+            });
+
+            
+
+            // Send an AJAX request
+            $.getJSON(uri2 + '/GetAllProducts/')
+                .done(function (data) {
+                    console.log('data', data);
+                    // On success, 'data' contains a list of products.
+                    $.each(data, function (key, item) {
+                        // Add a list item for the product.
+
+                        $('<li>', { text: formatItem(item) }).appendTo($('#products'));
+                    });
+                });
+        });
+
+        function check() {
+            console.log('check');
+            var parameter = localStorage.getItem('user');
+            var json = ({
+                'parameter': parameter
+            });
+
+            $.ajax({
+                url: 'l/api/login/check/',
+                data: JSON.stringify(json),
+                type: "post",
+                contentType: "application/json",
+                success: function (result) {
+                    if (result) {
+                        console.log('login ok');
+                    }
+                    else {
+                        location.href = 'https://www.google.com.tw/search?rlz=1C1GCEA_enTW779TW781&ei=dn6fW5y9PIa48QWU9oHgAg&q=%E8%B3%87%E5%AE%89%E7%AE%A1%E7%90%86%E6%B3%95&oq=%E8%B3%87%E5%AE%89%E7%AE%A1%E7%90%86%E6%B3%95&gs_l=psy-ab.3..0l7j0i30k1l3.2147.3568.0.3890.14.13.0.0.0.0.144.862.12j1.13.0....0...1.1j4.64.psy-ab..2.5.418...35i39k1j0i67k1j0i131k1j0i131i67k1.0.2pbMyM-7mXQ';
+                    }
+                }
+
+            });
+        }
+
+        function formatItem(item) {
+            return item.ProductName + ': $' + item.Price + '使用折價券後 : ' + (1 - item.Discount ) * item.Price;
+        }
+
+
+
+        function getUrlVars() {
+            var vars = [], hash;
+            var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+            for (var i = 0; i < hashes.length; i++) {
+                hash = hashes[i].split('=');
+                vars.push(hash[0]);
+                vars[hash[0]] = hash[1];
+            }
+            return vars;
+        }
+
+        function SaveProductInfo() {
+            var _discount = $("#ProductDiscount").val() / 100;
+            var Shelf;
+            if ($("#Shelf")[0].checked) {
+                Shelf = 'y';
+            }
+            else {
+                Shelf = 'n';
+            }
+
+           
+            var json = ({
+                "ProductName": $("#ProductName").val(),
+                "PCoupon": $("#ProductCoupon").val(),
+                "Price": $("#ProductPrice").val() ,
+                "Discount": _discount ,
+                "StartTime": $("#ProductStart").val(),
+                "EndTime": $("#ProductEnd").val(),
+                "Shelf": Shelf,
+                "Valid": "y"
+            });
+
+            console.log('json is : ', json);
+            console.log('json is : ', JSON.stringify(json));
+            $.ajax({
+                url: uri + '/PostProductInfo/',
+                data: JSON.stringify(json),
+                type: "post",
+                contentType: "application/json",
+                success: function (result) {
+                    console.log('success result : ', result);
+                },
+                error: function (er) {
+                    BackErr(er);
+                }
+
+            });
+        }
+
+        function ExecuteAPI(catalog, method, para, success, fail) {
+            $.ajax({
+                url: "/api/" + catalog + "/" + method,
+                type: "post",
+                contentType: "application/json",
+                beforeSend: function (xhr)
+                {
+                    if (typeof __ExecuteAPIToken !== "undefined")
+                        xhr.setRequestHeader("Authorization", "Bearer " + __ExecuteAPIToken)
+                },
+                data: JSON.stringify(para),
+                success: function (apiResult)
+                {
+                    if (!success) _ExecuteAPIonSuccess(apiResult); else success(apiResult)
+                },
+                error: function (ex)
+                {
+                    if (!fail) _ExecuteAPIonError(ex);
+                    else fail(ex)
+                }
+            })
+        }
+
+
+        function saveCouponInfo() {
+            console.log("click saveCouponInfo");
+        }
+
+
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
+            crossorigin="anonymous"></script>
+
+</body>
+
+</html>

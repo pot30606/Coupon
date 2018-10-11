@@ -1,0 +1,15 @@
+.in-container-top{
+    position: relative;
+    height: 420px;
+    
+}
+
+.imgdisplay{
+    position: relative;
+    height: 400px;
+    margin:0; padding:0;
+}
+.imgdisplay > div{
+    top:50px;
+}
+
