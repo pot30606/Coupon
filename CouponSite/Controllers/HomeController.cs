@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using CouponSite.Models;
+using AMZ_Coupon.Utility;
 
 namespace CouponSite.Controllers
 {
@@ -12,7 +13,8 @@ namespace CouponSite.Controllers
     {
         public IActionResult CouponSite()
         {
-            return View();
+            var result = CouponDB.GetData();
+            return View(result);
         }
 
         public IActionResult About()

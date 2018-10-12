@@ -19,8 +19,8 @@ namespace AMZ_Coupon.Utility
 
         public static IMongoDatabase GetMongoDatabase()
         {
-            var mongoClient = new MongoClient("mongodb://localhost:27017");
-            return mongoClient.GetDatabase("CustomerDB");
+            var client = new MongoClient("mongodb+srv://Terry:ji2bvPDHJz5jLe21@clusteramzcoupon-g3tzk.mongodb.net/test?retryWrites=true");
+            return client.GetDatabase("AMZCouponDB");
         }
 
        

@@ -16,7 +16,7 @@ namespace CouponSite.Models
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public string ProductName { get; set; }
-        public decimal Price { get; set; }
+        public Decimal128 Price { get; set; }
         public string Shelf { get; set; }
         public string Valid { get; set; }
     }
