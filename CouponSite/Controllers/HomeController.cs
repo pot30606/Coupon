@@ -6,16 +6,25 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using CouponSite.Models;
 using AMZ_Coupon.Utility;
+using MongoDB.Bson;
 
 namespace CouponSite.Controllers
 {
+    
     public class HomeController : Controller
     {
-        public IActionResult CouponSite()
+        [Route("Home/CouponSite/{id}")]
+        public IActionResult CouponSite(string id)
         {
-            var result = CouponDB.GetData();
+            var result = new Product();
+            if (id != null)
+            {
+                result = CouponDB.GetSingleProductDetail(id);
+            }
+            
             return View(result);
         }
+
 
         public IActionResult About()
         {

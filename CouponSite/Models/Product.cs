@@ -19,7 +19,7 @@ namespace CouponSite.Models
         public Decimal128 Price { get; set; }
         public string Shelf { get; set; }
         public string Valid { get; set; }
-        public ObjectId OwnerID { get; set; }
+        public string OwnerID { get; set; }
         public ObjectId PictureID { get; set; }
         public ObjectId VideoID { get; set; }
         public ObjectId CommandID { get; set; }

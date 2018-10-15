@@ -42,7 +42,6 @@ namespace AMZ_Coupon.Utility
             var result = true;
             product = CreateProductDetailInAMZCoupon(product);
             result = CreateCouponDetailInCoupon(product);
-
             if (result)
             {
                 return true;
@@ -51,11 +50,7 @@ namespace AMZ_Coupon.Utility
             {
                 return false;
             }
-
-
         }
-
-
 
         private static Product CreateProductDetailInAMZCoupon(Product product)
         {
@@ -65,8 +60,6 @@ namespace AMZ_Coupon.Utility
             product.VideoID = ObjectId.GenerateNewId();
             product.CommandID = ObjectId.GenerateNewId();
             product.CouponID = ObjectId.GenerateNewId();
-
-
             var document = new BsonDocument
             {
                 {"ProductName", product.ProductName},
@@ -111,7 +104,6 @@ namespace AMZ_Coupon.Utility
                         {"CouponID",  product.CouponID }
                     };
                     collection.InsertOne(document);
-
                 }
                 return true;
             }
@@ -119,6 +111,22 @@ namespace AMZ_Coupon.Utility
             {
                 return false;
             }
+        }
+
+        public static Product GetSingleProductDetail(string id)
+        {
+            ObjectId _id = ObjectId.Parse(id);
+            db = GetMongoDatabase();
+            var collection = db.GetCollection<Product>("AMZCoupon");
+
+            //var filter = Builders<Product>.Filter.Eq(x => x._id, id);
+            var filter = Builders<Product>.Filter.Eq("_id", _id);
+            //collection.Find(x => x == id).ToList();
+            var results = collection.Find(filter).ToList();
+
+            return results.FirstOrDefault();
+
+            
         }
     }
 }
