@@ -499,8 +499,13 @@
                         <div class="btn-addcart-product-detail size9 trans-0-4 m-t-10 m-b-10">
                             <!-- Button -->
                             <button class="flex-c-m sizefull bg1 bo-rad-23 hov1 s-text1 trans-0-4" id="GetCouponButton" data-toggle="modal" data-target="#exampleModal">
-                                Get Coupon !
+                                Get Coupon ! @Model.OwnerID  
                             </button>
+                            <div ng-app="myApp" ng-controller="myCtrl">
+                                
+                                <input ng-model="OwnerID">
+                                {{OwnerID}}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -849,6 +854,7 @@
 </section>
 <script type="text/javascript" src="@Url.Content("~/")vendor/jquery/jquery-3.2.1.min.js"></script>
 <script type="text/javascript" src="@Url.Content("~/")vendor/animsition/js/animsition.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
 <script>
 
 
@@ -860,14 +866,19 @@
         /*[ Load page ]
         ===========================================================*/
 
-        console.log('model is ' , @Model)
+        angular.module("hobbitModule").value("companionship", @Html.Raw(Model));
+
+        var app = angular.module('myApp', ['HomeController']);
+        app.controller('myCtrl', function ($scope) {
+            $scope.model = @Html.Raw(Model);
+        });
+     
 
         $('#GoBackEnd').hide();
         $('#wrongText').hide();
         $('#displayCoupon').hide();
         
-        var detail = getProductDetailById(ProductID);
-        
+
         isOwner();
 
         $("#GoBackEnd").on('click', function () {
@@ -1190,7 +1201,7 @@
     }
 
     function getProductDetailById() {
-        
+
         var s = "http://sss?????/Home/CouponSite/5bc1c87879b182321013f9ad";
         var sArray = s.split('/CouponSite/');
         var id = sArray[1].split('/');

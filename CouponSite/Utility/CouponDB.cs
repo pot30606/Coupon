@@ -22,7 +22,7 @@ namespace AMZ_Coupon.Utility
 
         public static IMongoDatabase GetMongoDatabase()
         {
-            var client = new MongoClient("mongodb+srv://Terry:ji2bvPDHJz5jLe21@clusteramzcoupon-g3tzk.mongodb.net/test?retryWrites=true");
+            var client = new MongoClient("mongodb+srv://Terry:VBCrzhDOc7ZWNAmC@clusteramzcoupon-g3tzk.mongodb.net/test?retryWrites=true");
             return client.GetDatabase("AMZCouponDB");
         }
 
