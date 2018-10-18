@@ -22,6 +22,7 @@ namespace CouponSite.Controllers
                 result = CouponDB.GetSingleProductDetail(id);
             }
             
+
             return View(result);
         }
 
