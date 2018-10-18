@@ -21,9 +21,18 @@ namespace CouponSite.Controllers
             {
                 result = CouponDB.GetSingleProductDetail(id);
             }
-            
-
             return View(result);
+        }
+
+
+
+        [Route("api/ReceiveCoupon")]
+        [HttpPost]
+        public JsonResult ReceiveCoupon(ReceiveCoupon receiveInfo)
+        {
+            bool result = CouponDB.ReceiveCoupon(receiveInfo);
+            var x = result;
+            return Json(new { Success = true, Message = "Success" });
         }
 
 

@@ -15,7 +15,7 @@ namespace CouponSite.Models
         public string ProductName { get; set; }
         public string Valid { get; set; }
         public string Product_Valid { get; set; }
-        public Decimal128 Price { get; set; }
+        public decimal Price { get; set; }
         public string Shelf { get; set; }
         public string OwnerID { get; set; }
         public ObjectId PictureID { get; set; }
@@ -32,15 +32,28 @@ namespace CouponSite.Models
         public string PCoupon { get; set; }
     }
 
-
-
-    public class CouponList
+    public class Coupons
     {
         public string Coupon { get; set; }
         public string Used { get; set; }
+
     }
 
+    public class ReceiveCoupon
+    {
+        public string PCoupon { get; set; }
+        public string Email { get; set; }
+        public string Name { get; set; }
+        public string ProductID { get; set; }
 
+    }
+
+    public class Member
+    {
+        public ObjectId _id { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+    }
 
 
 

@@ -37,6 +37,42 @@ namespace AMZ_Coupon.Utility
             return result;
         }
 
+        public static bool ReceiveCoupon(ReceiveCoupon receiveCoupon)
+        {
+            db = GetMongoDatabase();
+            var collection_AMZCoupon = db.GetCollection<Product>("AMZCoupon");
+            var _id = ObjectId.Parse(receiveCoupon.ProductID);
+
+            var builder2 = Builders<Product>.Filter;
+            var filter2 = builder2.And(builder2.Eq("_id", _id));
+            //var update2 = Builders<Product>.Update.Set("Coupons.Used", "y");
+            var query = collection_AMZCoupon.Find(filter2).ToList().FirstOrDefault();
+            var result = query;
+            foreach (var item in result.Coupons)
+            {
+                if (item["Used"] == "n" && item["Coupon"] == receiveCoupon.PCoupon)
+                {
+                    item["Used"] = "y";
+                }
+            }
+            var update = Builders<Product>.Update.Set("Coupons", result);
+            collection_AMZCoupon.UpdateOne( query, result);
+
+
+
+            var collectionMember = db.GetCollection<BsonDocument>("Member");
+            var document = new BsonDocument
+            {
+                {"Name", receiveCoupon.Name},
+                {"Email",  receiveCoupon.Email }
+
+            };
+            collectionMember.InsertOne(document);
+
+
+            return true;
+        }
+
         public static bool InsertCouponDetail(Product product)
         {
             db = GetMongoDatabase();
@@ -95,7 +131,7 @@ namespace AMZ_Coupon.Utility
                 return null;
             }
         }
-       
+
 
         public static Product GetSingleProductDetail(string id)
         {
@@ -103,12 +139,12 @@ namespace AMZ_Coupon.Utility
             db = GetMongoDatabase();
             var result = new Product();
             var collection_AMZCoupon = db.GetCollection<Product>("AMZCoupon");
-
             //var filterold = Builders<Product>.Filter.AnyEq("Coupons", new BsonDocument { { "Used", "n" } , { "Coupon", "xxx-xxx-xxx" } });
             var builder = Builders<Product>.Filter;
-            var filter = builder.And(builder.Eq("Coupons.Used", "n"));
+            var filter = builder.And(builder.Eq("_id", _id));
             var query = collection_AMZCoupon.Find(filter).ToList();
-            if(query.Count() < 1)
+
+            if (query.Count() < 1)
             {
                 return null;
             }
@@ -118,6 +154,7 @@ namespace AMZ_Coupon.Utility
             var xx = (BsonDocument)couponArray;
 
             result.PCoupon = xx["Coupon"].ToString();
+            result.Coupons = null;
             return result;
 
         }
