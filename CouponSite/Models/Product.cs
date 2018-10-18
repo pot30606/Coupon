@@ -22,10 +22,11 @@ namespace CouponSite.Models
         public ObjectId VideoID { get; set; }
         public ObjectId CommandID { get; set; }
         public ObjectId StarID { get; set; }
-        public Array Coupons { get; set; }
+        public BsonArray Coupons { get; set; }
         public decimal Discount { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
+        public DateTime AddedTime { get; set; }
 
 
         public string PCoupon { get; set; }

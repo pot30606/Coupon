@@ -5,6 +5,7 @@ using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
 using MongoDB.Driver.GridFS;
 using MongoDB.Driver.Linq;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -94,73 +95,31 @@ namespace AMZ_Coupon.Utility
                 return null;
             }
         }
-        /*
-        private static bool CreateCouponDetailInCoupon(Product product)
-        {
-            var collection = db.GetCollection<BsonDocument>("Coupon");
-            try
-            {
-                string[] CouponArray = product.PCoupon.Split('\n');
-                foreach (string coupon in CouponArray)
-                {
-                    var document = new BsonDocument
-                    {
-                        {"Coupon",  coupon },
-                        {"StartTime",  product.StartTime },
-                        {"EndTime",  product.EndTime },
-                        {"Discount",  product.Discount },
-                        {"Valid",  product.Valid },
-                        {"CouponID",  product.CouponID }
-                    };
-                    collection.InsertOne(document);
-                }
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-        */
-
+       
 
         public static Product GetSingleProductDetail(string id)
         {
             ObjectId _id = ObjectId.Parse(id);
-            var result = new Product();
             db = GetMongoDatabase();
+            var result = new Product();
+            var collection_AMZCoupon = db.GetCollection<Product>("AMZCoupon");
 
-            var query_AMZCoupon = db.GetCollection<Product>("AMZCoupon");
+            //var filterold = Builders<Product>.Filter.AnyEq("Coupons", new BsonDocument { { "Used", "n" } , { "Coupon", "xxx-xxx-xxx" } });
+            var builder = Builders<Product>.Filter;
+            var filter = builder.And(builder.Eq("Coupons.Used", "n"));
+            var query = collection_AMZCoupon.Find(filter).ToList();
+            if(query.Count() < 1)
+            {
+                return null;
+            }
+            //get Coupon
+            result = query.FirstOrDefault();
+            var couponArray = result.Coupons.FirstOrDefault();
+            var xx = (BsonDocument)couponArray;
 
-            return null;
-
+            result.PCoupon = xx["Coupon"].ToString();
+            return result;
 
         }
     }
 }
-
-/*
-
-var db = GetDbInstance();
-            var Plist = new List<Product>();
-
-            var Coupons = product.PCoupon.Split('\n');
-            for(int i =0; i< Coupons.Length; i++)
-            {
-                product.ProductID = DateTime.Now.ToString("yyyyMMddhhmmss") +  i;
-                product.PCoupon = Coupons[i];
-                Plist.Add(product);
-            }
-            db.Product.InsertAllOnSubmit(Plist);
-
-            try
-            {
-                db.SubmitChanges();
-            }
-            catch (Exception error)
-            {
-                return false;
-            }
-
-            return true;
- * */
