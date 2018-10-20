@@ -955,7 +955,9 @@
             $.post("@Url.Content("~/api/ReceiveCoupon")",
                 json,
                 function (res) {
-                        alert(JSON.stringify(res));
+                    if (res) {
+                        displayCouponCode();
+                    }
                 },
                 "json"
             );

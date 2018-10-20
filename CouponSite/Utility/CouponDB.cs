@@ -45,20 +45,18 @@ namespace AMZ_Coupon.Utility
 
             var builder2 = Builders<Product>.Filter;
             var filter2 = builder2.And(builder2.Eq("_id", _id));
-            //var update2 = Builders<Product>.Update.Set("Coupons.Used", "y");
             var query = collection_AMZCoupon.Find(filter2).ToList().FirstOrDefault();
-            var result = query;
-            foreach (var item in result.Coupons)
+            foreach (var item in query.Coupons)
             {
                 if (item["Used"] == "n" && item["Coupon"] == receiveCoupon.PCoupon)
                 {
                     item["Used"] = "y";
                 }
             }
-            var update = Builders<Product>.Update.Set("Coupons", result);
-            collection_AMZCoupon.UpdateOne( query, result);
+            var update = Builders<Product>.Update.Set("Coupons", query.Coupons);
+            var updateResult = collection_AMZCoupon.UpdateOne(filter2, update);
 
-
+            
 
             var collectionMember = db.GetCollection<BsonDocument>("Member");
             var document = new BsonDocument
