@@ -876,13 +876,17 @@
         /*[ Load page ]
         ===========================================================*/
 
-        if ('@Model.ProductName' != null) {
-            var item;
+        
+        var item;
             @inject IJsonHelper Json;
-            item = @Json.Serialize(Model)
+            item = @Json.Serialize(Model);
+        var couponcode = item.PCoupon;
+        console.log('couponcode is', couponcode);
+        if (couponcode != undefined || couponcode != null) {
             GetDataFromMVC(item);
         }
         else {
+            console.log('IS NULL , SOLD OUT');
             $('#GetCouponButton').text('Sold Out !');
             $('#GetCouponButton').attr('disabled', 'disabled');
             $('#GetCouponButton').removeClass('hov1');
@@ -948,7 +952,7 @@
                 "Email": UserEmail,
                 "Name": UserName,
                 "PCoupon": Coupon,
-                "ProductID": ProductID 
+                "ProductID": ProductID
             }
             console.log('json is', json);
 
@@ -961,7 +965,7 @@
                 },
                 "json"
             );
-            
+
 
         }
 

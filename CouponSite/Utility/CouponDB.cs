@@ -43,21 +43,21 @@ namespace AMZ_Coupon.Utility
             var collection_AMZCoupon = db.GetCollection<Product>("AMZCoupon");
             var _id = ObjectId.Parse(receiveCoupon.ProductID);
 
-            var builder2 = Builders<Product>.Filter;
-            var filter2 = builder2.And(builder2.Eq("_id", _id));
-            var query = collection_AMZCoupon.Find(filter2).ToList().FirstOrDefault();
+            var builder = Builders<Product>.Filter;
+            var filter = builder.And(builder.Eq("_id", _id));
+            var query = collection_AMZCoupon.Find(filter).ToList().FirstOrDefault();
             foreach (var item in query.Coupons)
             {
                 if (item["Used"] == "n" && item["Coupon"] == receiveCoupon.PCoupon)
                 {
                     item["Used"] = "y";
+                    break;
                 }
             }
             var update = Builders<Product>.Update.Set("Coupons", query.Coupons);
-            var updateResult = collection_AMZCoupon.UpdateOne(filter2, update);
+            var updateResult = collection_AMZCoupon.UpdateOne(filter, update);
 
-            
-
+            //Insert User Info (Email and Name)
             var collectionMember = db.GetCollection<BsonDocument>("Member");
             var document = new BsonDocument
             {
@@ -133,28 +133,42 @@ namespace AMZ_Coupon.Utility
 
         public static Product GetSingleProductDetail(string id)
         {
-            ObjectId _id = ObjectId.Parse(id);
-            db = GetMongoDatabase();
             var result = new Product();
-            var collection_AMZCoupon = db.GetCollection<Product>("AMZCoupon");
-            //var filterold = Builders<Product>.Filter.AnyEq("Coupons", new BsonDocument { { "Used", "n" } , { "Coupon", "xxx-xxx-xxx" } });
-            var builder = Builders<Product>.Filter;
-            var filter = builder.And(builder.Eq("_id", _id));
-            var query = collection_AMZCoupon.Find(filter).ToList();
-
-            if (query.Count() < 1)
+            string singleCoupon = null;
+            ObjectId _id = ObjectId.Parse(id);
+            //find Product By Id
+            List<Product> queryResult =  findProductDetailById(_id);
+            if (queryResult.Count() < 1)
             {
                 return null;
             }
-            //get Coupon
-            result = query.FirstOrDefault();
-            var couponArray = result.Coupons.FirstOrDefault();
-            var xx = (BsonDocument)couponArray;
+            
+            //Get Coupon
+            result = queryResult.FirstOrDefault();
+            var couponArray = result.Coupons;
+            foreach (var item in couponArray)
+            {
+                if (item["Used"].ToString() == "n")
+                {
+                    singleCoupon = item["Coupon"].ToString();
+                    break;
+                }
+            }
 
-            result.PCoupon = xx["Coupon"].ToString();
             result.Coupons = null;
+            result.PCoupon = singleCoupon;
             return result;
 
+        }
+
+        private static List<Product> findProductDetailById(ObjectId _id)
+        {
+            db = GetMongoDatabase();
+            var collection_AMZCoupon = db.GetCollection<Product>("AMZCoupon");
+            var builder = Builders<Product>.Filter;
+            var filter = builder.And(builder.Eq("_id", _id));
+            var query = collection_AMZCoupon.Find(filter).ToList();
+            return query;
         }
     }
 }
