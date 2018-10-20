@@ -37,6 +37,47 @@ namespace AMZ_Coupon.Utility
             return result;
         }
 
+        public static bool CheckLogin(_Member member)
+        {
+            db = GetMongoDatabase();
+            var builder = Builders<_Member>.Filter;
+            var memberCollection = db.GetCollection<_Member>("Member");
+            var filter = builder.And(builder.Eq("Account", member.Account), builder.Eq("Password", member.Password));
+            var query = memberCollection.Find(filter).ToList();
+
+            if(query.Count() > 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static _Member RegistAccount(_Member member)
+        {
+            db = GetMongoDatabase();
+            member.MemberID = ObjectId.GenerateNewId();
+            var document = new BsonDocument
+            {
+                { "Account" , member.Account},
+                { "Password" , member.Password},
+                { "FBID" , ""},
+                { "GID" , ""},
+                { "IsWhiteList" , "y"},
+                { "RegistDate" , DateTime.Now}
+            };
+            var memberCollection = db.GetCollection<BsonDocument>("Member");
+            try
+            {
+                memberCollection.InsertOne(document);
+                return member;
+            }
+            catch
+            {
+                return null;
+            }
+
+        }
+
         public static bool ReceiveCoupon(ReceiveCoupon receiveCoupon)
         {
             db = GetMongoDatabase();
@@ -58,7 +99,7 @@ namespace AMZ_Coupon.Utility
             var updateResult = collection_AMZCoupon.UpdateOne(filter, update);
 
             //Insert User Info (Email and Name)
-            var collectionMember = db.GetCollection<BsonDocument>("Member");
+            var collectionMember = db.GetCollection<BsonDocument>("User");
             var document = new BsonDocument
             {
                 {"Name", receiveCoupon.Name},

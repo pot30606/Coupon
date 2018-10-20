@@ -27,5 +27,30 @@ namespace CouponSite.Controllers
             var n = CouponDB.InsertCouponDetail(products);
             return n;
         }
+
+        [Route("Backend/Login")]
+        [HttpPost]
+        public bool Login(_Member member) 
+        {
+            var status = CouponDB.CheckLogin(member);
+            if(status == true)
+            {
+                return status;
+            }
+            return status;
+        }
+
+        [Route("Backend/Register")]
+        [HttpPost]
+        public string Register(_Member member)
+        {
+            var status = CouponDB.RegistAccount(member);
+            if (status != null)
+            {
+                return status.Account;
+            }
+            return null;
+        }
+
     }
 }

@@ -48,14 +48,23 @@ namespace CouponSite.Models
 
     }
 
-    public class Member
+    public class User
     {
         public ObjectId _id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
     }
 
-
+    public class _Member {
+        public ObjectId _id { get; set; }
+        public ObjectId MemberID { get; set; }
+        public string Account { get; set; }
+        public string Password { get; set; }
+        public string FBID { get; set; }
+        public string GID { get; set; }
+        public string IsWhiteList { get; set; }
+        public DateTime RegistDate { get; set; }
+    }
 
 
 }

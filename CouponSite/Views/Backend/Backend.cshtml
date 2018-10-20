@@ -5,8 +5,8 @@
 }
 
 <script>
-    
 
+    var IsLogin = false;
 
 
 $(document).ready(function () {
@@ -44,6 +44,18 @@ $(document).ready(function () {
     });
 
     var uri = '';
+
+    $('#Login').on('click', function () {
+
+        Login();
+
+    });
+    $('#Regist').on('click', function () {
+
+        Regist();
+
+    });
+
     /*
     // Send an AJAX request
     $.getJSON(uri)
@@ -58,7 +70,57 @@ $(document).ready(function () {
         });
         */
 
-});
+    });
+
+function Login() {
+    var account = $('#UserAccount').val();
+    var password = $('#UserPassword').val();
+    var json = {
+        "Account": account,
+        "Password": password
+    };
+    console.log('Click Login , and json is', json);
+        $.post("@Url.Content("~/Backend/Login")",
+        json,
+            function (res) {
+                if (res != false) {
+                console.log('login succeed!');
+                    IsLogin = true;
+                    localStorage.setItem('user', account);
+            }
+            else {
+                console.log('login fail!');
+            }
+        },
+        "json"
+        );
+    }
+
+    function Regist() {
+        var Raccount = $('#RegistAccount').val();
+        var Rpassword = $('#RegistPassword').val();
+        var json = {
+            "Account": Raccount,
+            "Password": Rpassword
+        }
+
+        $.post("@Url.Content("~/Backend/Register")",
+        json,
+            function (res) {
+                console.log('res', res);
+            if (res != null) {
+                console.log('Regist succeed!');
+                IsLogin = true;
+                localStorage.setItem('user', res);
+            }
+            else {
+                console.log('Regist fail!');
+            }
+        },
+        "json"
+        );
+
+    }
 
 function checkLogin() {
     console.log('check');
@@ -113,7 +175,7 @@ function SaveProductInfo() {
 
 
     var json = ({
-        
+
         "ProductName": $("#ProductName").val(),
         "PCoupon": $("#ProductCoupon").val(),
         "Price": $("#ProductPrice").val(),
@@ -139,7 +201,7 @@ function SaveProductInfo() {
 
     /*
     $.ajax({
-        url: "Url.Action("InsertCouponDetail","Backend")", 
+        url: "Url.Action("InsertCouponDetail","Backend")",
         data: JSON.stringify(json),
         method: "post",
         contentType: "application/json",
@@ -181,6 +243,73 @@ function saveCouponInfo() {
 }
 
 </script>
+
+
+<!-- R Modal -->
+<div class="modal fade" id="RegistModal" tabindex="-1" role="dialog" aria-labelledby="RegistModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="RegistModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form>
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Account:</label>
+                        <input type="text" class="form-control" id="RegistAccount">
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">Password:</label>
+                        <input type="text" class="form-control" id="RegistPassword">
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <a  id="Regist" class="btn btn-primary">Regist Now</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- L Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form>
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Account:</label>
+                        <input type="text" class="form-control" id="UserAccount">
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">Password:</label>
+                        <input type="text" class="form-control" id="UserPassword">
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <a  id="Login" class="btn btn-primary">Login</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
 <div class="header">
     <!--標題bar-->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -194,6 +323,17 @@ function saveCouponInfo() {
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                 <li class="nav-item active">
                     <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+
+                </li>
+                <li>
+                    <a class="nav-link" data-toggle="modal" data-target="#exampleModal">
+                        Login
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-link" data-toggle="modal" data-target="#RegistModal">
+                        Regist
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link disabled" href="#"></a>

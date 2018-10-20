@@ -880,7 +880,7 @@
         var item;
             @inject IJsonHelper Json;
             item = @Json.Serialize(Model);
-        var couponcode = item.PCoupon;
+        var couponcode = item.pCoupon;
         console.log('couponcode is', couponcode);
         if (couponcode != undefined || couponcode != null) {
             GetDataFromMVC(item);
