@@ -12,6 +12,8 @@
 $(document).ready(function () {
     //checkLogin();
 
+    $('#ProductCoupon').attr('placeholder', 'Please copy and paste your claim code here, one code per line.');
+
     $("#saveProductInfo").on('click', function () {
         SaveProductInfo();
     });
@@ -165,14 +167,15 @@ function getUrlVars() {
 
 function SaveProductInfo() {
     var _discount = $("#ProductDiscount").val() / 100;
-    var Shelf;
+    var Shelf = "y";
+    /*
     if ($("#Shelf")[0].checked) {
         Shelf = 'y';
     }
     else {
         Shelf = 'n';
     }
-
+    */
 
     var json = ({
 
@@ -270,7 +273,7 @@ function saveCouponInfo() {
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <a  id="Regist" class="btn btn-primary">Regist Now</a>
+                    <a id="Regist" class="btn btn-primary">Regist Now</a>
                 </div>
             </form>
         </div>
@@ -302,7 +305,7 @@ function saveCouponInfo() {
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <a  id="Login" class="btn btn-primary">Login</a>
+                    <a id="Login" class="btn btn-primary">Login</a>
                 </div>
             </form>
         </div>
@@ -320,18 +323,14 @@ function saveCouponInfo() {
         <a class="navbar-brand" href="#"></a>
 
         <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
-            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+            <ul class="navbar-nav mt-2 mt-lg-0 ml-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-
-                </li>
-                <li>
-                    <a class="nav-link" data-toggle="modal" data-target="#exampleModal">
+                    <a class="nav-link pointer" data-toggle="modal" data-target="#exampleModal">
                         Login
                     </a>
                 </li>
-                <li>
-                    <a class="nav-link" data-toggle="modal" data-target="#RegistModal">
+                <li class="nav-item active" >
+                    <a class="nav-link pointer" data-toggle="modal" data-target="#RegistModal">
                         Regist
                     </a>
                 </li>
@@ -344,90 +343,77 @@ function saveCouponInfo() {
     </nav>
 </div>
 <div class="container">
-    <!--新增產品-->
+    <div class="space2">
+
+    </div>
     <div class="row">
-        <div class="col-4">
+        <div class="col-2"></div>
+        <div class="col-5">
+            <div class="row" id="addNewProductAndCoupon">
+                <div class="col-12">
+                    <div class="form-group">
+                        <label for="">ProductName</label>
+                        <input type="text"
+                               class="form-control" name="" id="ProductName" aria-describedby="helpId" placeholder="Enter product name">
+                    </div>
+                    <div class="form-group">
+                        <label for="">Coupon Code</label>
+                        <textarea class="form-control" rows="5" id="ProductCoupon" placeholder=""></textarea>
 
+                    </div>
+                    <div class="form-group">
+                        <label for="">Deal Price</label>
+                        <input type="number"
+                               class="form-control" name="" id="ProductPrice" aria-describedby="helpId" placeholder="19.99">
+                    </div>
+                    <div class="form-group">
+                        <label for="">Percent off</label>
+                        <input type="number"
+                               class="form-control" name="" id="ProductDiscount" aria-describedby="helpId" placeholder="20">
+                    </div>
+                    <div class="form-group">
+                        <label for="">Start Date</label>
+                        <input type="datetime"
+                               class="form-control" name="" id="ProductStart" aria-describedby="helpId" placeholder="2018-XX-XX">
+                    </div>
+                    <div class="form-group">
+                        <label for="">End Date</label>
+                        <input type="datetime"
+                               class="form-control" name="" id="ProductEnd" aria-describedby="helpId" placeholder="2018-XX-XX">
+                    </div>
+
+
+
+                    <!--
+                    <label>產品上架狀態</label>
+                    <br />
+                    <label class="switch">
+                        <input type="checkbox" id="Shelf">
+                        <span class="slider round"></span>
+                    </label>
+                        -->
+                    <a name="" id="saveProductInfo" class="btn btn-primary" style="width:100%">Save</a>
+                </div>
+            </div>
         </div>
-        <div class="col-3">
-            <a class="btn btn-primary" id="addnew">新增產品與庫碰券</a>
+        <div class="col-2">
+            <div class="description">
+
+            </div>
+            <div class="space">
+
+            </div>
+            <div class="imagearea">
+
+            </div>
+            
+            
         </div>
-        <div class="col-3">
-            <a class="btn btn-success" id="editcoupon">對現有產品增加庫碰券</a>
-        </div>
-        <div class="col-3">
-
-        </div>
-    </div>
-    <div class="row" id="addNewProductAndCoupon">
-        <div class="col-12">
-
-
-            <div class="form-group">
-                <label for="">產品名稱</label>
-                <input type="text"
-                       class="form-control" name="" id="ProductName" aria-describedby="helpId" placeholder="">
-            </div>
-            <div class="form-group">
-                <label for="">Coupon代碼</label>
-                <textarea class="form-control" rows="5" id="ProductCoupon"></textarea>
-
-            </div>
-            <div class="form-group">
-                <label for="">價格</label>
-                <input type="number"
-                       class="form-control" name="" id="ProductPrice" aria-describedby="helpId" placeholder="">
-            </div>
-            <div class="form-group">
-                <label for="">折扣(?% off)</label>
-                <input type="number"
-                       class="form-control" name="" id="ProductDiscount" aria-describedby="helpId" placeholder="">
-            </div>
-            <div class="form-group">
-                <label for="">優惠期間(開始)</label>
-                <input type="datetime"
-                       class="form-control" name="" id="ProductStart" aria-describedby="helpId" placeholder="">
-            </div>
-            <div class="form-group">
-                <label for="">優惠期間(結束)</label>
-                <input type="datetime"
-                       class="form-control" name="" id="ProductEnd" aria-describedby="helpId" placeholder="">
-            </div>
-
-            <label>產品上架狀態</label>
-            <br />
-            <label class="switch">
-                <input type="checkbox" id="Shelf">
-                <span class="slider round"></span>
-            </label>
-
-            <a name="" id="saveProductInfo" class="btn btn-primary">新增產品與庫碰</a>
-        </div>
-    </div>
-    <!--對產品新增庫碰-->>
-    <div class="row" id="editProductNewCoupon">
-        <div class="col-12">
-            <label> 選擇產品</label>
-
-            <label> 輸入庫碰 </label>
-            <div class="form-group">
-                <label for="">Coupon代碼</label>
-                <textarea class="form-control" rows="5" id="ProductCoupon"></textarea>
-
-            </div>
-            <a name="" id="saveCouponInfo" class="btn btn-success">對該產品新增庫碰</a>
-        </div>
+        <div class="col-2"></div>
     </div>
 
-    <!--全部產品資訊-->
-    <div class="row">
-        <div class="col-12">
-            <div>
-                <h2>All Products</h2>
-                <ul id="products" />
-            </div>
-        </div>
-    </div>
+
+
 
 
 
