@@ -28,14 +28,14 @@ namespace CouponSite.Controllers
 
         [Route("api/ReceiveCoupon")]
         [HttpPost]
-        public bool ReceiveCoupon(ReceiveCoupon receiveInfo)
+        public Product ReceiveCoupon(ReceiveCoupon receiveInfo)
         {
-            bool result = CouponDB.ReceiveCoupon(receiveInfo);
-            if (result == true)
+            var result = CouponDB.ReceiveCoupon(receiveInfo);
+            if (result != null)
             {
-                return true;
+                return result;
             }
-            return false;
+            return null;
         }
 
 

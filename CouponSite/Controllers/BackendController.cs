@@ -52,5 +52,17 @@ namespace CouponSite.Controllers
             return null;
         }
 
+        [Route("Backend/Checklogin")]
+        [HttpPost]
+        public bool Checklogin(string parameter)
+        {
+           
+            if (parameter != null)
+            {
+                return true;
+            }
+            return false;
+        }
+
     }
 }

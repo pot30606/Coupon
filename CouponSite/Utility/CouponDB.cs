@@ -78,22 +78,28 @@ namespace AMZ_Coupon.Utility
 
         }
 
-        public static bool ReceiveCoupon(ReceiveCoupon receiveCoupon)
+        public static Product ReceiveCoupon(ReceiveCoupon receiveInfo)
         {
             db = GetMongoDatabase();
+            string UnUsedCoupon = null;
             var collection_AMZCoupon = db.GetCollection<Product>("AMZCoupon");
-            var _id = ObjectId.Parse(receiveCoupon.ProductID);
+            var _id = ObjectId.Parse(receiveInfo.ProductID);
 
             var builder = Builders<Product>.Filter;
             var filter = builder.And(builder.Eq("_id", _id));
             var query = collection_AMZCoupon.Find(filter).ToList().FirstOrDefault();
             foreach (var item in query.Coupons)
             {
-                if (item["Used"] == "n" && item["Coupon"] == receiveCoupon.PCoupon)
+                if (item["Used"] == "n")
                 {
+                    UnUsedCoupon = item["Coupon"].ToString();
                     item["Used"] = "y";
                     break;
                 }
+            }
+            if(UnUsedCoupon == null)
+            {
+                return null;
             }
             var update = Builders<Product>.Update.Set("Coupons", query.Coupons);
             var updateResult = collection_AMZCoupon.UpdateOne(filter, update);
@@ -102,14 +108,16 @@ namespace AMZ_Coupon.Utility
             var collectionMember = db.GetCollection<BsonDocument>("User");
             var document = new BsonDocument
             {
-                {"Name", receiveCoupon.Name},
-                {"Email",  receiveCoupon.Email }
+                {"Name", receiveInfo.Name},
+                {"Email",  receiveInfo.Email }
 
             };
             collectionMember.InsertOne(document);
 
+            query.Coupons = null;
+            query.PCoupon = UnUsedCoupon;
 
-            return true;
+            return query;
         }
 
         public static bool InsertCouponDetail(Product product)
@@ -175,7 +183,7 @@ namespace AMZ_Coupon.Utility
         public static Product GetSingleProductDetail(string id)
         {
             var result = new Product();
-            string singleCoupon = null;
+            //string singleCoupon = null;
             ObjectId _id = ObjectId.Parse(id);
             //find Product By Id
             List<Product> queryResult =  findProductDetailById(_id);
@@ -183,21 +191,26 @@ namespace AMZ_Coupon.Utility
             {
                 return null;
             }
-            
+
             //Get Coupon
+            bool IsCouponExist = false;
             result = queryResult.FirstOrDefault();
             var couponArray = result.Coupons;
             foreach (var item in couponArray)
             {
                 if (item["Used"].ToString() == "n")
                 {
-                    singleCoupon = item["Coupon"].ToString();
+                    IsCouponExist = true;
+                    //singleCoupon = item["Coupon"].ToString();
                     break;
                 }
             }
-
+            if(IsCouponExist == false)
+            {
+                return null;
+            }
             result.Coupons = null;
-            result.PCoupon = singleCoupon;
+            //result.PCoupon = singleCoupon;
             return result;
 
         }

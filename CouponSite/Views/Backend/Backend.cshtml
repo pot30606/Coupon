@@ -12,6 +12,9 @@
 $(document).ready(function () {
     //checkLogin();
 
+    $('#logout').hide();
+    $('#UserEmail').hide();
+
     $('#ProductCoupon').attr('placeholder', 'Please copy and paste your claim code here, one code per line.');
 
     $("#saveProductInfo").on('click', function () {
@@ -88,6 +91,7 @@ function Login() {
                 if (res != false) {
                 console.log('login succeed!');
                     IsLogin = true;
+                    showUserEmail(account);
                     localStorage.setItem('user', account);
             }
             else {
@@ -96,6 +100,23 @@ function Login() {
         },
         "json"
         );
+    }
+
+    function showUserEmail(email) {
+        $('#UserEmail').show();
+        $('#UserEmail').val(email);
+        $('#logout').show();
+        $('#showlogin').hide();
+        $('#showregist').hide();
+    }
+
+    function logOut() {
+        IsLogin = false;
+        $('#logout').hide();
+        $('#UserEmail').hide();
+        $('#UserEmail').val();
+        $('#showlogin').show();
+        $('#showregist').show();
     }
 
     function Regist() {
@@ -131,21 +152,22 @@ function checkLogin() {
         'parameter': parameter
     });
 
-    $.ajax({
-        url: 'l/api/login/check/',
-        data: JSON.stringify(json),
-        type: "post",
-        contentType: "application/json",
-        success: function (result) {
-            if (result) {
-                console.log('login ok');
+        $.post("@Url.Content("~/Backend/Checklogin")",
+        json,
+            function (res) {
+                console.log('res', res);
+                if (res == true) {
+                    showUserEmail(parameter);
+                    IsLogin = true;
             }
             else {
-                location.href = 'https://www.google.com.tw/search?rlz=1C1GCEA_enTW779TW781&ei=dn6fW5y9PIa48QWU9oHgAg&q=%E8%B3%87%E5%AE%89%E7%AE%A1%E7%90%86%E6%B3%95&oq=%E8%B3%87%E5%AE%89%E7%AE%A1%E7%90%86%E6%B3%95&gs_l=psy-ab.3..0l7j0i30k1l3.2147.3568.0.3890.14.13.0.0.0.0.144.862.12j1.13.0....0...1.1j4.64.psy-ab..2.5.418...35i39k1j0i67k1j0i131k1j0i131i67k1.0.2pbMyM-7mXQ';
+                console.log('fail!');
             }
-        }
+        },
+        "json"
+    );
 
-    });
+
 }
 
 function formatItem(item) {
@@ -324,18 +346,25 @@ function saveCouponInfo() {
 
         <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
             <ul class="navbar-nav mt-2 mt-lg-0 ml-auto">
-                <li class="nav-item active">
+                <li class="nav-item active" id="showlogin">
                     <a class="nav-link pointer" data-toggle="modal" data-target="#exampleModal">
                         Login
                     </a>
                 </li>
-                <li class="nav-item active" >
+                <li class="nav-item active" id="showregist">
                     <a class="nav-link pointer" data-toggle="modal" data-target="#RegistModal">
                         Regist
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="#"></a>
+                <li class="nav-item active">
+                    <a class="nav-link active" id="UserEmail">
+
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link active" id="logout">
+                        Logout
+                    </a>
                 </li>
             </ul>
             <form class="form-inline my-2 my-lg-0"></form>
