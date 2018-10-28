@@ -34,6 +34,10 @@ namespace CouponSite.Controllers
         [HttpPost]
         public bool InsertCouponDetail(CouponSite.Models.InsertProduct products)
         {
+            //if (products.Picture.Length > 1100000) // >1.1mb
+            //{
+            //    return false;
+            //};
             var x = DateTime.Now;
             var n = CouponDB.InsertCouponDetail(products, _environment);
             return n;
