@@ -22,4 +22,9 @@
     <None Include="wwwroot\js\BackEnd.js" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Images\" />
+    <Folder Include="wwwroot\images\" />
+  </ItemGroup>
+
 </Project>

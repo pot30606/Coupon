@@ -1,4 +1,6 @@
 ﻿using CouponSite.Models;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
@@ -8,7 +10,9 @@ using MongoDB.Driver.Linq;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Web;
 
 namespace AMZ_Coupon.Utility
@@ -45,7 +49,7 @@ namespace AMZ_Coupon.Utility
             var filter = builder.And(builder.Eq("Account", member.Account), builder.Eq("Password", member.Password));
             var query = memberCollection.Find(filter).ToList();
 
-            if(query.Count() > 0)
+            if (query.Count() > 0)
             {
                 return true;
             }
@@ -97,7 +101,7 @@ namespace AMZ_Coupon.Utility
                     break;
                 }
             }
-            if(UnUsedCoupon == null)
+            if (UnUsedCoupon == null)
             {
                 return null;
             }
@@ -120,11 +124,11 @@ namespace AMZ_Coupon.Utility
             return query;
         }
 
-        public static bool InsertCouponDetail(Product product)
+        public static bool InsertCouponDetail(InsertProduct product, IHostingEnvironment env)
         {
             db = GetMongoDatabase();
             var result = true;
-            product = CreateProductDetailInAMZCoupon(product);
+            product = CreateProductDetailInAMZCoupon(product, env);
 
             if (result)
             {
@@ -136,7 +140,7 @@ namespace AMZ_Coupon.Utility
             }
         }
 
-        private static Product CreateProductDetailInAMZCoupon(Product product)
+        private static InsertProduct CreateProductDetailInAMZCoupon(InsertProduct product, IHostingEnvironment env)
         {
             var collection = db.GetCollection<BsonDocument>("AMZCoupon");
             product.StarID = ObjectId.GenerateNewId();
@@ -144,25 +148,34 @@ namespace AMZ_Coupon.Utility
             product.VideoID = ObjectId.GenerateNewId();
             product.CommandID = ObjectId.GenerateNewId();
             var Coupons = new BsonArray();
-            string[] CouponArray = product.PCoupon.Split('\n');
+            string[] CouponArray = product.Coupons.Split('\n');
             foreach (var item in CouponArray)
             {
                 Coupons.Add(new BsonDocument { { "Used", "n" }, { "Coupon", item } });
             }
-
+            string ImgUrl = "";
+            if (product.Picture != null)
+            {
+                ImgUrl = SaveImage(product.Picture, product.Account, env);
+            }
+            
+            product.Shelf = "y";
+            product.Valid = "y";
+            product.OwnerID = FindUserIdByAccount(product.Account);
+            product.Discount = product.Discount / 100;
             var document = new BsonDocument
             {
                 {"ProductName", product.ProductName},
                 {"Price",  product.Price },
                 {"StarID",   product.StarID},
-                {"PictureID",  product.PictureID },
+                {"Picture",  ImgUrl },
                 {"VideoID",  product.VideoID },
                 {"CommandID",  product.CommandID },
                 {"Coupons",  Coupons },
                 {"Shelf",  product.Shelf },
                 {"Valid",  product.Valid },
                 {"AddedTime",  DateTime.Now },
-                {"OwnerID",  "testOwner123" },
+                {"OwnerID",  product.OwnerID },
                 {"Discount",  product.Discount },
                 {"StartTime",  product.StartTime },
                 {"EndTime",  product.EndTime }
@@ -179,6 +192,38 @@ namespace AMZ_Coupon.Utility
             }
         }
 
+        private static ObjectId FindUserIdByAccount(string Account)
+        {
+            db = GetMongoDatabase();
+            var collection_AMZCoupon = db.GetCollection<_Member>("Member");
+            var builder = Builders<_Member>.Filter;
+            var filter = builder.And(builder.Eq("Account", Account));
+            var query = collection_AMZCoupon.Find(filter).ToList().FirstOrDefault();
+            return query._id;
+        }
+
+        private static string SaveImage(IFormFile picture, string owner, IHostingEnvironment _environment)
+        {
+            var FileExtension = Path.GetExtension(picture.FileName);
+            var guid = "-" + Guid.NewGuid().ToString();
+            var fileName = DateTime.Now.ToString("yyyyMMddHHmmss-") + owner+ guid;
+
+            var dir = fileName + FileExtension;
+            // Combines two strings into a path.
+            fileName = Path.Combine(_environment.WebRootPath, "images") + $@"\{fileName+ FileExtension}";
+
+            // if you want to store path of folder in database
+            //PathDB = "Images/" + newFileName;
+
+            using (FileStream fs = System.IO.File.Create(fileName))
+            {
+                picture.CopyTo(fs);
+                fs.Flush();
+            }
+
+            return dir;
+
+        }
 
         public static Product GetSingleProductDetail(string id)
         {
@@ -186,7 +231,7 @@ namespace AMZ_Coupon.Utility
             //string singleCoupon = null;
             ObjectId _id = ObjectId.Parse(id);
             //find Product By Id
-            List<Product> queryResult =  findProductDetailById(_id);
+            List<Product> queryResult = findProductDetailById(_id);
             if (queryResult.Count() < 1)
             {
                 return null;
@@ -205,7 +250,7 @@ namespace AMZ_Coupon.Utility
                     break;
                 }
             }
-            if(IsCouponExist == false)
+            if (IsCouponExist == false)
             {
                 return null;
             }

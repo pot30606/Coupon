@@ -9,7 +9,8 @@
     var IsLogin = false;
 
 
-$(document).ready(function () {
+    $(document).ready(function () {
+        ShowLoginHint();
     checkLogin();
     $('#wrongText').hide();
     $('#wrongRegist').hide();
@@ -66,20 +67,6 @@ $(document).ready(function () {
 
     });
 
-    /*
-    // Send an AJAX request
-    $.getJSON(uri)
-        .done(function (data) {
-            console.log('data', data);
-            // On success, 'data' contains a list of products.
-            $.each(data, function (key, item) {
-                // Add a list item for the product.
-
-                $('<li>', { text: formatItem(item) }).appendTo($('#products'));
-            });
-        });
-        */
-
     });
 
 function Login() {
@@ -100,6 +87,7 @@ function Login() {
                     $('#exampleModal').modal('hide');
                     localStorage.setItem('user', account);
                     $('#wrongText').hide();
+                    LoginIsEnableSave(account);
             }
             else {
                     console.log('login fail!');
@@ -118,6 +106,18 @@ function Login() {
         $('#showregist').hide();
     }
 
+    function LoginIsEnableSave(account) {
+        $('#hd_userAccount').val(account);
+        $('#loginHint').hide();
+        $('#saveProductInfo').prop('disabled', false);
+    }
+
+    function ShowLoginHint() {
+        $('#hd_userAccount').val();
+        $('#loginHint').show();
+        $('#saveProductInfo').prop('disabled', true);
+    }
+
     function logOut() {
         IsLogin = false;
         localStorage.clear();
@@ -126,6 +126,7 @@ function Login() {
         $('#UserEmail').val();
         $('#showlogin').show();
         $('#showregist').show();
+        ShowLoginHint();
     }
 
     function Regist() {
@@ -147,6 +148,7 @@ function Login() {
                 localStorage.setItem('user', res);
                 $('#wrongRegist').hide();
                 showUserEmail(Raccount);
+                LoginIsEnableSave(Raccount);
             }
             else {
                 console.log('Regist fail!');
@@ -172,9 +174,10 @@ function checkLogin() {
                 if (res == true) {
                     showUserEmail(parameter);
                     IsLogin = true;
+                    LoginIsEnableSave(parameter);
             }
             else {
-                console.log('fail!');
+                console.log('not login!');
             }
         },
         "json"
@@ -212,8 +215,8 @@ function SaveProductInfo() {
     }
     */
 
-    var json = ({
 
+    var json = ({
         "ProductName": $("#ProductName").val(),
         "PCoupon": $("#ProductCoupon").val(),
         "Price": $("#ProductPrice").val(),
@@ -221,37 +224,20 @@ function SaveProductInfo() {
         "StartTime": $("#ProductStart").val(),
         "EndTime": $("#ProductEnd").val(),
         "Shelf": Shelf,
-        "Valid": "y"
+        "Valid": "y",
     });
 
     console.log('json is : ', json);
     console.log('post json is : ', JSON.stringify(json));
 
 
-    $.post("@Url.Content("~/Backend/InsertCouponDetail")",
-        json,
-        function (res) {
-                alert(JSON.stringify(res));
-        },
-        "json"
-    );
 
 
-    /*
-    $.ajax({
-        url: "Url.Action("InsertCouponDetail","Backend")",
-        data: JSON.stringify(json),
-        method: "post",
-        contentType: "application/json",
-        success: function (result) {
-            console.log('success result : ', result);
-        },
-        error: function (er) {
-            BackErr(er);
-        }
 
-    });
-    */
+
+
+
+
 
 }
 
@@ -392,38 +378,42 @@ function saveCouponInfo() {
         <div class="col-2"></div>
         <div class="col-5">
             <div class="row" id="addNewProductAndCoupon">
-                <div class="col-12">
+                <form class="col-12" method="post" action="InsertCouponDetail" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="">ProductName</label>
                         <input type="text"
-                               class="form-control" name="" id="ProductName" aria-describedby="helpId" placeholder="Enter product name">
+                               class="form-control" name="ProductName" id="ProductName" aria-describedby="helpId" placeholder="Enter product name">
                     </div>
                     <div class="form-group">
                         <label for="">Coupon Code</label>
-                        <textarea class="form-control" rows="5" id="ProductCoupon" placeholder=""></textarea>
+                        <textarea class="form-control" name="Coupons" rows="5" id="ProductCoupon" placeholder=""></textarea>
 
+                    </div>
+                    <div class="form-group">
+                        <label for="">Picture</label>
+                        <input class="form-control" name="Picture" id="ProductPicture" type="file">
                     </div>
                     <div class="form-group">
                         <label for="">Deal Price</label>
                         <input type="number"
-                               class="form-control" name="" id="ProductPrice" aria-describedby="helpId" placeholder="19.99">
+                               class="form-control" name="Price" id="ProductPrice" aria-describedby="helpId" placeholder="19.99">
                     </div>
                     <div class="form-group">
                         <label for="">Percent off</label>
                         <input type="number"
-                               class="form-control" name="" id="ProductDiscount" aria-describedby="helpId" placeholder="20">
+                               class="form-control" name="Discount" id="ProductDiscount" aria-describedby="helpId" placeholder="20">
                     </div>
                     <div class="form-group">
                         <label for="">Start Date</label>
                         <input type="datetime"
-                               class="form-control" name="" id="ProductStart" aria-describedby="helpId" placeholder="2018-XX-XX">
+                               class="form-control" name="StartTime" id="ProductStart" aria-describedby="helpId" placeholder="2018-XX-XX">
                     </div>
                     <div class="form-group">
                         <label for="">End Date</label>
                         <input type="datetime"
-                               class="form-control" name="" id="ProductEnd" aria-describedby="helpId" placeholder="2018-XX-XX">
+                               class="form-control" name="EndTime" id="ProductEnd" aria-describedby="helpId" placeholder="2018-XX-XX">
                     </div>
-
+                    <input type="hidden" id="hd_userAccount" name="Account" value="">
 
 
                     <!--
@@ -434,8 +424,11 @@ function saveCouponInfo() {
                         <span class="slider round"></span>
                     </label>
                         -->
-                    <a name="" id="saveProductInfo" class="btn btn-primary" style="width:100%">Save</a>
-                </div>
+                    <input type="submit" id="saveProductInfo" class="btn btn-primary" style="width:100%" value="Save" disabled>
+                    <div class="form-group">
+                        <small id="loginHint">please login</small>
+                    </div>
+                </form>
             </div>
         </div>
         <div class="col-2">
@@ -448,8 +441,8 @@ function saveCouponInfo() {
             <div class="imagearea">
 
             </div>
-            
-            
+
+
         </div>
         <div class="col-2"></div>
     </div>

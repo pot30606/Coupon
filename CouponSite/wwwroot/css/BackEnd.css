@@ -4,7 +4,9 @@
     cursor: pointer;
     
 }
-
+small{
+    color:gray;
+}
 .imagearea{
     position:inherit;
     width:300px;

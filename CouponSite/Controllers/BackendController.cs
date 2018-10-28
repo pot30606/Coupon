@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AMZ_Coupon.Models;
 using AMZ_Coupon.Utility;
 using CouponSite.Models;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,11 +21,21 @@ namespace CouponSite.Controllers
         // Backend/api/InsertCouponDetail
         //[Route("Backend/api/InsertCouponDetail")]
         // GET api/<controller>/products
+
+        private readonly IHostingEnvironment _environment;
+
+        // Constructor
+        public BackendController(IHostingEnvironment IHostingEnvironment)
+        {
+            _environment = IHostingEnvironment;
+        }
+
+
         [HttpPost]
-        public bool InsertCouponDetail(CouponSite.Models.Product products)
+        public bool InsertCouponDetail(CouponSite.Models.InsertProduct products)
         {
             var x = DateTime.Now;
-            var n = CouponDB.InsertCouponDetail(products);
+            var n = CouponDB.InsertCouponDetail(products, _environment);
             return n;
         }
 

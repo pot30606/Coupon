@@ -20,6 +20,7 @@ namespace CouponSite.Controllers
             if (id != null)
             {
                 result = CouponDB.GetSingleProductDetail(id);
+                ViewBag.Tree = "~/images/"+result.Picture;
             }
             return View(result);
         }
