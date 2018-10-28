@@ -7,6 +7,7 @@
 <script>
 
     var IsLogin = false;
+    var widgetId1;
 
 
     $(document).ready(function () {
@@ -97,6 +98,15 @@ function Login() {
         "json"
         );
     }
+
+    var onloadCallback = function () {
+        alert("grecaptcha is ready!");
+        widgetId1 = grecaptcha.render('example1', {
+            'sitekey': '6LdQRncUAAAAAOyycbMRlPOeBO8C3N94kdIJEzDl',
+            'theme': 'light'
+        });
+        console.log('widgetId1', widgetId1);
+    };
 
     function showUserEmail(email) {
         $('#UserEmail').show();
@@ -292,7 +302,9 @@ function saveCouponInfo() {
                     </div>
                     <div class="form-group">
                         <div class="g-recaptcha" data-sitekey="6LdQRncUAAAAAOyycbMRlPOeBO8C3N94kdIJEzDl"></div>
+                        <div id="example1"></div>
                     </div>
+
                     <label for="recipient-name" class="col-form-label" id="wrongRegist">Account or Password Invalid</label>
                 </div>
                 <div class="modal-footer">
